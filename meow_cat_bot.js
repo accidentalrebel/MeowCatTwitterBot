@@ -38,7 +38,7 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro += "WAIT SECONDS=3" + nl;
 
     // We click on the submit button
-    // macro += "TAG POS=1 TYPE=BUTTON ATTR=class:btn*tweet-action*tweet-btn" + nl;
+    macro += "TAG POS=1 TYPE=BUTTON ATTR=class:btn*tweet-action*tweet-btn" + nl;
 
     macro += "SET !EXTRACT NULL" + nl;
     macro += "ADD !EXTRACT {{!NOW:yyyy-mm-dd<SP>hhh<SP>nnmin}}" + nl;
