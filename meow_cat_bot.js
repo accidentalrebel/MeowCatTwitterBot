@@ -49,3 +49,10 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro += "WAIT SECONDS=6" + nl;
     iimPlay(macro);
 }
+
+macro = "CODE:";
+macro += "TAB CLOSEALLOTHERS" + nl;
+macro += "TAB T=1" + nl;
+macro += "TAB CLOSE" + nl;
+
+iimPlay(macro);
