@@ -1,10 +1,14 @@
 var maxLoop = 5;
+var lastTweetFileName = "meow_cat_bot_last_tweet";
+var logFileName = "meow_cat_bot";
+
+var nl = "\n";
 
 var macro = "CODE:";
-var nl = "\n";
 
 macro += "TAB T=1" + nl;
 macro += "URL GOTO=https://twitter.com/search?f=tweets&vertical=default&q=%23meow&src=typd" + nl;
+macro += "FILEDELETE NAME=" + lastTweetFileName + ".csv" + nl;
 iimPlay(macro);
 
 for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
@@ -38,13 +42,18 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro += "WAIT SECONDS=3" + nl;
 
     // We click on the submit button
-    macro += "TAG POS=1 TYPE=BUTTON ATTR=class:btn*tweet-action*tweet-btn" + nl;
+    // macro += "TAG POS=1 TYPE=BUTTON ATTR=class:btn*tweet-action*tweet-btn" + nl;
 
     macro += "SET !EXTRACT NULL" + nl;
     macro += "ADD !EXTRACT {{!NOW:yyyy-mm-dd<SP>hhh<SP>nnmin}}" + nl;
     macro += "ADD !EXTRACT {{tweetUrl}}" + nl;
 
-    macro += "SAVEAS TYPE=EXTRACT FOLDER=* FILE=meow_cat_bot.csv" + nl;
+    macro += "SAVEAS TYPE=EXTRACT FOLDER=* FILE=" + logFileName + ".csv" + nl;
+
+    if ( currentLoop >= maxLoop - 1 ) {
+        macro += "SET !EXTRACT {{tweetUrl}}" + nl;
+        macro += "SAVEAS TYPE=EXTRACT FOLDER=* FILE=" + lastTweetFileName + ".csv" + nl;
+    }
 
     macro += "WAIT SECONDS=6" + nl;
     iimPlay(macro);
@@ -55,4 +64,4 @@ macro += "TAB CLOSEALLOTHERS" + nl;
 macro += "TAB T=1" + nl;
 macro += "TAB CLOSE" + nl;
 
-iimPlay(macro);
+// iimPlay(macro);
