@@ -1,6 +1,7 @@
-var maxLoop = 5;
+var maxLoop = 2;
 var lastTweetFileName = "meow_cat_bot_last_tweet";
 var logFileName = "meow_cat_bot";
+var currentWorkingDirectory = "c:\\Users\\ARebel\\Dropbox\\imacros\\macros\\meow_cat_bot";
 
 var nl = "\n";
 
@@ -8,8 +9,23 @@ var macro = "CODE:";
 
 macro += "TAB T=1" + nl;
 macro += "URL GOTO=https://twitter.com/search?f=tweets&vertical=default&q=%23meow&src=typd" + nl;
-macro += "FILEDELETE NAME=" + lastTweetFileName + ".csv" + nl;
+// iimPlay(macro);
+
+// We then check if we have a data in the lastTweet log
+macro = "CODE:";
+macro += "SET !FOLDER_DATASOURCE " + currentWorkingDirectory + nl;
+macro += "SET !ERRORIGNORE YES" + nl;
+macro += "SET !DATASOURCE " + lastTweetFileName + ".csv" + nl;
+macro += "SET !DATASOURCE_LINE 1" + nl;
+macro += "SET !EXTRACT {{!COL1}}" + nl;
+macro += "SET !ERRORIGNORE NO" + nl;
 iimPlay(macro);
+
+var lastTweet = iimGetExtract(1);
+if ( lastTweet )
+    iimDisplay(lastTweet);
+else
+    iimDisplay("No last tweet");
 
 for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro = "CODE:";
@@ -51,12 +67,13 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro += "SAVEAS TYPE=EXTRACT FOLDER=* FILE=" + logFileName + ".csv" + nl;
 
     if ( currentLoop >= maxLoop - 1 ) {
+        macro += "FILEDELETE NAME=" + lastTweetFileName + ".csv" + nl;
         macro += "SET !EXTRACT {{tweetUrl}}" + nl;
-        macro += "SAVEAS TYPE=EXTRACT FOLDER=* FILE=" + lastTweetFileName + ".csv" + nl;
+        macro += "SAVEAS TYPE=EXTRACT FOLDER=" + currentWorkingDirectory +" FILE=" + lastTweetFileName + ".csv" + nl;
     }
 
     macro += "WAIT SECONDS=6" + nl;
-    iimPlay(macro);
+    //iimPlay(macro);
 }
 
 macro = "CODE:";
