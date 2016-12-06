@@ -1,4 +1,4 @@
-var maxLoop = 2;
+var maxLoop = 5;
 var lastTweetFileName = "meow_cat_bot_last_tweet";
 var logFileName = "meow_cat_bot";
 var currentWorkingDirectory = "c:\\Users\\ARebel\\Dropbox\\imacros\\macros\\meow_cat_bot";
@@ -9,7 +9,7 @@ var macro = "CODE:";
 
 macro += "TAB T=1" + nl;
 macro += "URL GOTO=https://twitter.com/search?f=tweets&vertical=default&q=%23meow&src=typd" + nl;
-iimPlay(macro);
+// iimPlay(macro);
 
 // We then check if we have a data in the lastTweet log
 macro = "CODE:";
@@ -22,7 +22,7 @@ macro += "SET !ERRORIGNORE NO" + nl;
 iimPlay(macro);
 
 var lastTweet = iimGetExtract(1);
-if ( lastTweet )
+if ( lastTweet != null )
     iimDisplay(lastTweet);
 else
     iimDisplay("No last tweet");
@@ -41,12 +41,14 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
 
     // If we detect a tweet that we already processed, end the program
     var tweetUrl = iimGetExtract(1);
-    if ( tweetUrl == lastTweet )
+    if ( tweetUrl == lastTweet ) {
+        iimDisplay("Reached a tweet that was already processed: " + tweetUrl);
         break;
+    }
 
     iimDisplay(tweetUrl + " ?= " + lastTweet);
     iimSet("tweetUrl", tweetUrl);
-    iimSet("currentLoop", currentLoop);
+    iimSet("currentLoop", (currentLoop+1));
 
     // We continue with the program.
     macro = "CODE:";
@@ -79,12 +81,15 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro += "ADD !EXTRACT {{!NOW:yyyy-mm-dd<SP>hhh<SP>nnmin}}" + nl;
     macro += "ADD !EXTRACT {{tweetUrl}}" + nl;
 
-    macro += "SAVEAS TYPE=EXTRACT FOLDER=* FILE=" + logFileName + ".csv" + nl;
+    macro += "SAVEAS TYPE=EXTRACT FOLDER=" + currentWorkingDirectory + " FILE=" + logFileName + ".csv" + nl;
 
     if ( currentLoop >= maxLoop - 1 ) {
-        macro += "FILEDELETE NAME=" + lastTweetFileName + ".csv" + nl;
+        // Delete the lastTweetFile if it exists
+        if ( lastTweet != null ) 
+            macro += "FILEDELETE NAME=" + currentWorkingDirectory + "\\" + lastTweetFileName + ".csv" + nl;
+
         macro += "SET !EXTRACT {{tweetUrl}}" + nl;
-        macro += "SAVEAS TYPE=EXTRACT FOLDER=" + currentWorkingDirectory +" FILE=" + lastTweetFileName + ".csv" + nl;
+        macro += "SAVEAS TYPE=EXTRACT FOLDER=" + currentWorkingDirectory + " FILE=" + lastTweetFileName + ".csv" + nl;
     }
 
     macro += "WAIT SECONDS=6" + nl;
