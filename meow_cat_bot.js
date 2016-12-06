@@ -9,7 +9,7 @@ var macro = "CODE:";
 
 macro += "TAB T=1" + nl;
 macro += "URL GOTO=https://twitter.com/search?f=tweets&vertical=default&q=%23meow&src=typd" + nl;
-// iimPlay(macro);
+iimPlay(macro);
 
 // We then check if we have a data in the lastTweet log
 macro = "CODE:";
@@ -37,6 +37,21 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     macro += "SET !EXTRACT NULL" + nl;
     macro += "TAG POS=R1 TYPE=A ATTR=class:tweet-timestamp* EXTRACT=HREF" + nl;
     macro += "SET tweetUrl {{!EXTRACT}}" + nl;
+    iimPlay(macro);
+
+    // If we detect a tweet that we already processed, end the program
+    var tweetUrl = iimGetExtract(1);
+    if ( tweetUrl == lastTweet )
+        break;
+
+    iimDisplay(tweetUrl + " ?= " + lastTweet);
+    iimSet("tweetUrl", tweetUrl);
+    iimSet("currentLoop", currentLoop);
+
+    // We continue with the program.
+    macro = "CODE:";
+    macro += "TAG POS={{currentLoop}} TYPE=DIV ATTR=class:tweet*js-actionable-tweet* EXTRACT=TXT" + nl;
+    macro += "SET !EXTRACT NULL" + nl;
 
     // We click on the reply button
     macro += "TAG POS=R1 TYPE=BUTTON ATTR=class:ProfileTweet-actionButton*" + nl;
@@ -73,7 +88,7 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
     }
 
     macro += "WAIT SECONDS=6" + nl;
-    //iimPlay(macro);
+    iimPlay(macro);
 }
 
 macro = "CODE:";
