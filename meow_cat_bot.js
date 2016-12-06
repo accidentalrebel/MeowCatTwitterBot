@@ -78,7 +78,7 @@ for ( currentLoop = 0 ; currentLoop < maxLoop ; currentLoop++) {
 
     macro += "SAVEAS TYPE=EXTRACT FOLDER=" + currentWorkingDirectory + " FILE=" + logFileName + ".csv" + nl;
 
-    if ( currentLoop >= maxLoop - 1 ) {
+    if ( currentLoop <= 0 ) {
         // Delete the lastTweetFile if it exists
         if ( lastTweet != null ) 
             macro += "FILEDELETE NAME=" + currentWorkingDirectory + "\\" + lastTweetFileName + ".csv" + nl;
